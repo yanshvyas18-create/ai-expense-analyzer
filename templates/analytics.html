@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block header %}Analytics{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- Chart 1: Large Category Chart -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="card-title text-secondary mb-4">Total Spending by Category</h5>
+                <div style="height: 400px;">
+                    <canvas id="largeCategoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chart 2: Large Monthly Chart -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="card-title text-secondary mb-4">Monthly Spending Trend</h5>
+                <div style="height: 400px;">
+                    <canvas id="largeMonthlyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const catLabels = {{ cat_labels | tojson }};
+    const catAmounts = {{ cat_amounts | tojson }};
+    const monthLabels = {{ month_labels | tojson }};
+    const monthAmounts = {{ month_amounts | tojson }};
+
+    const bgColors = [
+        'rgba(255, 99, 132, 0.7)',
+        'rgba(54, 162, 235, 0.7)',
+        'rgba(255, 206, 86, 0.7)',
+        'rgba(75, 192, 192, 0.7)',
+        'rgba(153, 102, 255, 0.7)',
+        'rgba(255, 159, 64, 0.7)',
+        'rgba(199, 199, 199, 0.7)',
+        'rgba(83, 102, 255, 0.7)'
+    ];
+
+    if (catLabels.length > 0) {
+        new Chart(document.getElementById('largeCategoryChart'), {
+            type: 'bar', // Using bar for better comparison on full width
+            data: {
+                labels: catLabels,
+                datasets: [{
+                    label: 'Amount (₹)',
+                    data: catAmounts,
+                    backgroundColor: bgColors,
+                    borderWidth: 1
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
+
+    if (monthLabels.length > 0) {
+        new Chart(document.getElementById('largeMonthlyChart'), {
+            type: 'line', // Line chart for trends
+            data: {
+                labels: monthLabels,
+                datasets: [{
+                    label: 'Total Spending (₹)',
+                    data: monthAmounts,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3 // Smooth curves
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

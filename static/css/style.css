@@ -1,0 +1,72 @@
+body {
+    overflow-x: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fc !important; /* Lighter background for better contrast */
+}
+
+#sidebar-wrapper {
+    min-height: 100vh;
+    width: 250px;
+    transition: margin 0.25s ease-out;
+    background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%) !important; /* Nice gradient sidebar */
+}
+
+#page-content-wrapper {
+    min-width: 100vw;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: -250px;
+}
+
+.list-group-item {
+    border: none;
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px;
+    transform: translateX(5px); /* Slide slightly on hover */
+}
+
+/* Card Styling Enhancements */
+.card {
+    border-radius: 12px !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+}
+
+/* Gradients for the summary cards */
+.bg-primary { background: linear-gradient(135deg, #4e73df 0%, #224abe 100%) !important; }
+.bg-success { background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%) !important; }
+.bg-info { background: linear-gradient(135deg, #36b9cc 0%, #258391 100%) !important; }
+.bg-danger { background: linear-gradient(135deg, #e74a3b 0%, #be2617 100%) !important; }
+
+/* Table styling */
+.table th {
+    border-top: none;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: #6c757d;
+    letter-spacing: 0.5px;
+}
+
+@media (min-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: 0;
+    }
+    #page-content-wrapper {
+        min-width: 0;
+        width: 100%;
+    }
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: -250px;
+    }
+}

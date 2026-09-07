@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block header %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+    <!-- Summary Cards -->
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 bg-primary text-white h-100">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-rupee-sign"></i> Total Expenses</h6>
+                <h3 class="fw-bold">₹{{ total }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 bg-success text-white h-100">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-receipt"></i> Transactions</h6>
+                <h3 class="fw-bold">{{ count }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 bg-info text-white h-100">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-calculator"></i> Average Expense</h6>
+                <h3 class="fw-bold">₹{{ avg }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 bg-danger text-white h-100">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-fire"></i> Highest Category</h6>
+                <h3 class="fw-bold">{{ highest_cat }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Insight -->
+<div class="alert alert-info shadow-sm" role="alert">
+    {{ insight }}
+</div>
+
+<div class="row g-4">
+    <!-- Chart 1: Category Distribution -->
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <h5 class="card-title text-secondary mb-3">Expense by Category</h5>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chart 2: Monthly Spending -->
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <h5 class="card-title text-secondary mb-3">Monthly Spending</h5>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title text-secondary m-0">Recent Transactions</h5>
+                    <a href="{{ url_for('transactions') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in recent_tx %}
+                            <tr>
+                                <td>{{ tx.date }}</td>
+                                <td>{{ tx.description }}</td>
+                                <td><span class="badge bg-secondary">{{ tx.category }}</span></td>
+                                <td class="fw-bold text-danger">-₹{{ tx.amount }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">No transactions found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Data passed from Flask backend
+    const catLabels = {{ cat_labels | tojson }};
+    const catAmounts = {{ cat_amounts | tojson }};
+    
+    const monthLabels = {{ month_labels | tojson }};
+    const monthAmounts = {{ month_amounts | tojson }};
+
+    // Colors for the charts
+    const bgColors = [
+        'rgba(255, 99, 132, 0.7)',
+        'rgba(54, 162, 235, 0.7)',
+        'rgba(255, 206, 86, 0.7)',
+        'rgba(75, 192, 192, 0.7)',
+        'rgba(153, 102, 255, 0.7)',
+        'rgba(255, 159, 64, 0.7)',
+        'rgba(199, 199, 199, 0.7)',
+        'rgba(83, 102, 255, 0.7)'
+    ];
+
+    // Category Doughnut Chart
+    if (catLabels.length > 0) {
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: catLabels,
+                datasets: [{
+                    data: catAmounts,
+                    backgroundColor: bgColors,
+                    borderWidth: 1
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+
+    // Monthly Bar Chart
+    if (monthLabels.length > 0) {
+        new Chart(document.getElementById('monthlyChart'), {
+            type: 'bar',
+            data: {
+                labels: monthLabels,
+                datasets: [{
+                    label: 'Spending (₹)',
+                    data: monthAmounts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

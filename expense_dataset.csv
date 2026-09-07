@@ -1,0 +1,45 @@
+description,category
+Zomato dinner,Food
+Swiggy lunch,Food
+Pizza delivery,Food
+Restaurant bill,Food
+Grocery store,Food
+McDonalds,Food
+Starbucks coffee,Food
+Uber ride,Travel
+Ola cab,Travel
+Flight ticket,Travel
+Train ticket,Travel
+Bus pass,Travel
+Metro card recharge,Travel
+Amazon shoes,Shopping
+Shopping mall,Shopping
+Myntra clothes,Shopping
+Flipkart electronics,Shopping
+Zara jacket,Shopping
+Electricity bill,Bills
+Internet bill,Bills
+Water bill,Bills
+Mobile recharge,Bills
+Gas cylinder,Bills
+College fees,Education
+Online course,Education
+Udemy tutorial,Education
+Books,Education
+Stationery,Education
+Netflix subscription,Entertainment
+Movie ticket,Entertainment
+Spotify premium,Entertainment
+Gaming console,Entertainment
+Concert ticket,Entertainment
+Medicine purchase,Healthcare
+Doctor consultation,Healthcare
+Pharmacy,Healthcare
+Blood test,Healthcare
+Hospital bill,Healthcare
+Gym membership,Healthcare
+Haircut,Other
+Gift for friend,Other
+Donation,Other
+Bike repair,Other
+Car wash,Other

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block header %}Add Expense{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('add_expense') }}">
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label fw-bold">Expense Description</label>
+                        <input type="text" class="form-control" id="description" name="description" placeholder="e.g., Zomato dinner, Uber ride" required>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="amount" class="form-label fw-bold">Amount (₹)</label>
+                            <input type="number" step="0.01" class="form-control" id="amount" name="amount" placeholder="0.00" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="date" class="form-label fw-bold">Date</label>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
+                    </div>
+
+                    <!-- AI Prediction Section -->
+                    <div class="mb-4">
+                        <button type="button" class="btn btn-info text-white w-100 fw-bold mb-3" onclick="analyzeExpense()">
+                            <i class="fas fa-robot"></i> Analyze Expense
+                        </button>
+                        
+                        <div class="p-3 bg-light rounded border text-center" id="predictionResult" style="display: none;">
+                            <span class="text-secondary">Predicted Category:</span>
+                            <h4 class="text-primary mt-1 mb-0" id="predictedCategory">-</h4>
+                            <small class="text-muted" id="predictionConfidence"></small>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="category" class="form-label fw-bold">Category</label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="" disabled selected>Select or Analyze above...</option>
+                            <option value="Food">Food</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Bills">Bills</option>
+                            <option value="Education">Education</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 fw-bold py-2">
+                        <i class="fas fa-save"></i> Save Expense
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Set today's date as default
+    document.getElementById('date').valueAsDate = new Date();
+
+    async function analyzeExpense() {
+        const desc = document.getElementById('description').value;
+        const resultDiv = document.getElementById('predictionResult');
+        const catText = document.getElementById('predictedCategory');
+        const confText = document.getElementById('predictionConfidence');
+        const categorySelect = document.getElementById('category');
+
+        if (!desc.trim()) {
+            alert("Please enter a description first.");
+            return;
+        }
+
+        catText.innerText = "Analyzing...";
+        confText.innerText = "";
+        resultDiv.style.display = "block";
+
+        try {
+            const response = await fetch('/api/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ description: desc })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Update UI with result
+                catText.innerText = "✨ " + data.category;
+                confText.innerText = "Confidence: " + data.confidence + "%";
+                
+                // Auto-select the category in the dropdown
+                categorySelect.value = data.category;
+            } else {
+                catText.innerText = "Error";
+                confText.innerText = data.error || "Failed to predict.";
+            }
+        } catch (error) {
+            catText.innerText = "Error";
+            confText.innerText = "Check connection or ML model.";
+        }
+    }
+</script>
+{% endblock %}
